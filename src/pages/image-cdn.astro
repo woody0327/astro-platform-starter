@@ -39,15 +39,15 @@ In the code below, a regular \`<img>\` tag is used in both cases for a framework
 Note that aside from Astro's \`Image\` or rolling your own \`<img>\` tags, you can also use the excellent [unpic-img](https://unpic.pics/) package.
 
 ~~~jsx
-// <== On the left, the original image
-<img src="/images/corgi.jpg" alt="Corgi" />
-
-// ==> On the right, explicitly using Netlify Image CDN endpoint for a responsive image
-<img 
+// <== On the left, explicitly using the Netlify Image CDN endpoint for a responsive image
+<img
   srcSet="${sampleImageSrcSet}"
-  sizes="${sizes}" 
-  alt="Corgi" 
+  sizes="${sizes}"
+  alt="Corgi"
 />
+
+// ==> On the right, the original image
+<img src="/images/corgi.jpg" alt="Corgi" />
 ~~~
 `;
 
