@@ -29,7 +29,7 @@ export default function NewShape(props: Props) {
             console.log(data.message);
         }
         setWasUploaded(true);
-        setLastMutationTime(Date.now());
+        setLastMutationTime?.(Date.now());
     };
 
     useEffect(() => {
