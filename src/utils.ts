@@ -54,4 +54,5 @@ export function cacheHeaders(maxAgeDays = 365, cacheTags?: string[]): Record<str
     return headers;
 }
 
-export const uploadDisabled = import.meta.env.PUBLIC_DISABLE_UPLOADS?.toLowerCase() === 'true';
+const metaEnv = (import.meta as ImportMeta & { env?: Record<string, string | undefined> }).env;
+export const uploadDisabled = metaEnv?.PUBLIC_DISABLE_UPLOADS?.toLowerCase() === 'true';
