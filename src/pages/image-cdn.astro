@@ -35,19 +35,19 @@ import corgi from '../assets/corgi.jpg';
 const originalVsCdnSnippet = `
 ## Original vs. optimized image: can you tell the difference?
 
-In the code below, a regular \`<img>\` tag is used in both cases for a framework-agnostic example. 
+In the code below, a regular \`<img>\` tag is used in both cases for a framework-agnostic example. On the left, the image uses Netlify Image CDN with \`srcset\`; on the right, it uses a plain \`src\` reference.
 Note that aside from Astro's \`Image\` or rolling your own \`<img>\` tags, you can also use the excellent [unpic-img](https://unpic.pics/) package.
 
 ~~~jsx
-// <== On the left, the original image
-<img src="/images/corgi.jpg" alt="Corgi" />
-
-// ==> On the right, explicitly using Netlify Image CDN endpoint for a responsive image
-<img 
+// <== On the left, explicitly using Netlify Image CDN endpoint for a responsive image
+<img
   srcSet="${sampleImageSrcSet}"
-  sizes="${sizes}" 
-  alt="Corgi" 
+  sizes="${sizes}"
+  alt="Corgi"
 />
+
+// ==> On the right, the original image
+<img src="/images/corgi.jpg" alt="Corgi" />
 ~~~
 `;
 
