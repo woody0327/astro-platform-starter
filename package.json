@@ -7,7 +7,8 @@
     "start": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "test": "vitest run"
   },
   "dependencies": {
     "@astrojs/netlify": "^5.2.0",
@@ -30,6 +31,7 @@
   "devDependencies": {
     "@types/blobshape": "^1.0.3",
     "@types/node": "^20.12.7",
-    "daisyui": "^4.10.2"
+    "daisyui": "^4.10.2",
+    "vitest": "^4.0.8"
   }
 }
