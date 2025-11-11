@@ -1,7 +1,7 @@
 ---
 import { Marked } from 'marked';
 import markedShiki from 'marked-shiki';
-import { getHighlighter } from 'shiki';
+import { getHighlighter, type Highlighter } from 'shiki';
 
 interface Props {
     content: string;
@@ -10,14 +10,7 @@ interface Props {
 
 const { content, class: className } = Astro.props;
 
-// `getHighlighter` is async, it initializes the internal and
-// loads the languages and themes specified.
-// Then later you can use `highlighter.codeToHtml` synchronously
-// with the loaded themes and languages.
-const highlighter = await getHighlighter({
-    langs: ['jsx', 'js'],
-    themes: ['min-dark']
-});
+const highlighter = await getMarkdownHighlighter();
 const html = await new Marked()
     .use(
         markedShiki({
@@ -30,6 +23,25 @@ const html = await new Marked()
         })
     )
     .parse(content);
+
+async function getMarkdownHighlighter(): Promise<Highlighter> {
+    const globalWithCache = globalThis as typeof globalThis & {
+        __markdownHighlighterPromise?: Promise<Highlighter>;
+    };
+
+    if (!globalWithCache.__markdownHighlighterPromise) {
+        // `getHighlighter` is async, it initializes the internal and
+        // loads the languages and themes specified. Cache the promise so
+        // subsequent renders reuse the same highlighter instance instead
+        // of instantiating a new one each time.
+        globalWithCache.__markdownHighlighterPromise = getHighlighter({
+            langs: ['jsx', 'js'],
+            themes: ['min-dark']
+        });
+    }
+
+    return globalWithCache.__markdownHighlighterPromise;
+}
 ---
 
 <div class:list={['markdown', className]} set:html={html} />
