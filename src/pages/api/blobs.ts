@@ -34,7 +34,10 @@ export const GET: APIRoute = async ({ request }) => {
             JSON.stringify({
                 keys: [],
                 error: 'Failed listing blobs'
-            })
+            }),
+            {
+                status: 500
+            }
         );
     }
 };
