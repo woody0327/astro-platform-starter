@@ -37,25 +37,71 @@ const exampleTag = tags[randomInt(0, tags.length - 1)];
 <Layout title="Revalidation">
     <h1 class="mb-10">Revalidating Server Content</h1>
     <Markdown content={explainer} class="mb-10" />
-    <button class="revalidate-button btn btn-primary" data-tag={exampleTag}>Invalidate tag: {exampleTag}</button>
-    <button class="btn btn-primary" onclick="location.reload()">Reload page</button>
+    <div class="flex flex-col gap-4 mb-4">
+        <label class="form-control w-full">
+            <div class="label">
+                <span class="label-text">Revalidation secret (required)</span>
+            </div>
+            <input
+                id="revalidation-secret"
+                type="password"
+                class="input input-bordered"
+                placeholder="Enter your secret"
+                autocomplete="off"
+            />
+            <div class="label">
+                <span class="label-text-alt">This value is never stored. It is sent as a header to the API route.</span>
+            </div>
+        </label>
+        <div class="flex gap-2">
+            <button class="revalidate-button btn btn-primary" data-tag={exampleTag}>Invalidate tag: {exampleTag}</button>
+            <button class="btn btn-primary" onclick="location.reload()">Reload page</button>
+        </div>
+    </div>
 </Layout>
 
 <script>
-    function revalidate(tag: string) {
-        fetch('/api/revalidate', {
-            method: 'POST',
-            body: JSON.stringify({ tags: [tag] }),
-            headers: {
-                'Content-Type': 'application/json'
+    async function revalidate(tag: string, secret: string) {
+        try {
+            const response = await fetch('/api/revalidate', {
+                method: 'POST',
+                body: JSON.stringify({ tags: [tag] }),
+                headers: {
+                    'Content-Type': 'application/json',
+                    'x-revalidate-secret': secret
+                }
+            });
+
+            if (!response.ok) {
+                const message = await response.text();
+                throw new Error(message || `Request failed with status ${response.status}`);
             }
-        });
-        alert(`Invalidated tag: ${tag}`);
+
+            const data = await response.json();
+            alert(`Invalidated tags: ${(data.invalidated as string[]).join(', ')}`);
+        } catch (error) {
+            const message = error instanceof Error ? error.message : 'Unexpected error';
+            console.error(message);
+            alert(`Failed to invalidate tag: ${message}`);
+        }
     }
 
     const revalidateButton = document.querySelectorAll('button.revalidate-button')[0];
-    revalidateButton.addEventListener('click', (e) => {
+    revalidateButton.addEventListener('click', async (e) => {
+        e.preventDefault();
         const tag = (e.target as HTMLButtonElement).getAttribute('data-tag');
-        revalidate(tag);
+        if (!tag) {
+            alert('Missing tag to invalidate.');
+            return;
+        }
+        const secretInput = document.querySelector('#revalidation-secret') as HTMLInputElement | null;
+        const secret = secretInput?.value.trim();
+
+        if (!secret) {
+            alert('Please provide the revalidation secret.');
+            return;
+        }
+
+        await revalidate(tag, secret);
     });
 </script>
